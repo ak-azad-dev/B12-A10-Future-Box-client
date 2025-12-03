@@ -96,14 +96,14 @@ export const Navbar = () => {
       <div className="navbar-end hidden md:flex gap-5">
         <Link
           to="/sign-in"
-          className="btn button text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#4DA1FF] to-[#1C75FF] shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl"
+          className="btn text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#4DA1FF] to-[#1C75FF] shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
         >
           Login
         </Link>
 
         <Link
           to="/register"
-          className="btn button text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#1C6DD0] to-[#0047B3] shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl"
+          className="btn text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#E63A3A] to-[#F25A3C] shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
         >
           Register
         </Link>
