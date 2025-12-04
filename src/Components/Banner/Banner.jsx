@@ -1,26 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-export const Banner = () => {
-  const [movies, setMovies] = useState([]);
-
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:3000/api/movies`
-        );
-        const data = await res.json();
-        console.log("data", data);
-        // Return only first 3 movies
-        setMovies((data.data || []).slice(0, 3));
-      } catch (err) {
-        console.error("Failed to fetch:", err);
-      }
-    };
-
-    fetchMovies();
-  }, []); // 🔄 Re-fetch whenever search changes
-
+export const Banner = ({ featuredMovies }) => {
   // const slides = [
   //   {
   //     src: "https://4kwallpapers.com/images/walls/thumbs_3t/24207.jpg",
@@ -39,12 +19,15 @@ export const Banner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const prev = useCallback(
-    () => setCurrentSlide((p) => (p - 1 + movies.length) % movies.length),
-    [movies.length]
+    () =>
+      setCurrentSlide(
+        (p) => (p - 1 + featuredMovies.length) % featuredMovies.length
+      ),
+    [featuredMovies.length]
   );
   const next = useCallback(
-    () => setCurrentSlide((p) => (p + 1) % movies.length),
-    [movies.length]
+    () => setCurrentSlide((p) => (p + 1) % featuredMovies.length),
+    [featuredMovies.length]
   );
 
   useEffect(() => {
@@ -61,10 +44,10 @@ export const Banner = () => {
       className="relative w-full overflow-hidden bg-black"
       role="region"
       aria-roledescription="carousel"
-      aria-label="Featured movies"
+      aria-label="Featured featuredMovies"
     >
       <div className="w-full h-full md:h-[750px] relative">
-        {movies.map((slide, idx) => {
+        {featuredMovies.map((slide, idx) => {
           const active = idx === currentSlide;
           return (
             <div
