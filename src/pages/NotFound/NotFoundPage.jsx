@@ -7,7 +7,6 @@ const NotFoundPage = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#0B0D17] px-5 md:px-10 py-20">
       <div className="flex flex-col md:flex-row items-center md:justify-between w-full max-w-[1440px] gap-10">
-        {/* Left: Image */}
         <div className="shrink-0">
           <img
             src={Error404}
@@ -15,8 +14,6 @@ const NotFoundPage = () => {
             className="w-full max-w-[500px] h-auto"
           />
         </div>
-
-        {/* Right: Text & Buttons */}
         <div className="text-center md:text-left flex flex-col items-center md:items-start">
           <h1 className="text-[48px] md:text-[56px] font-bold leading-[60px] text-white">
             Oops! Page not found
@@ -25,8 +22,6 @@ const NotFoundPage = () => {
             Looks like you’ve wandered off the map. The page you’re looking for
             might have moved or never existed.
           </p>
-
-          {/* Optional Tip */}
           <p className="text-[#A0B0C0] mt-2 text-sm md:text-base">
             Try going back home or visit our{" "}
             <Link to="/help" className="underline hover:text-white">
@@ -34,8 +29,6 @@ const NotFoundPage = () => {
             </Link>
             .
           </p>
-
-          {/* Buttons */}
           <div className="flex gap-4 mt-6 flex-wrap justify-center md:justify-start">
             <Link to="/">
               <button className="flex items-center gap-2.5 px-5 py-3 rounded-lg bg-linear-to-r from-[#E63A3A] to-[#F25A3C] text-white font-semibold shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
