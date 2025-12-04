@@ -4,6 +4,7 @@ import Footer from "../../Components/Footer/Footer";
 import Statistics from "../../Components/Statistics/Statistics";
 import { useState } from "react";
 import { useEffect } from "react";
+import TopRatedMovies from "../../Components/Movies/TopRatedMovies";
 
 export const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -32,6 +33,7 @@ export const HomePage = () => {
     <div>
       <Banner featuredMovies={featuredMovies}></Banner>
       <Statistics movies={movies}></Statistics>
+      <TopRatedMovies movies={movies}></TopRatedMovies>
       <Footer></Footer>
     </div>
   );

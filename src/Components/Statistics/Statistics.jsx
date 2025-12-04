@@ -6,7 +6,7 @@ const Statistics = ({ movies }) => {
       <div className="stats stats-vertical sm:stats-horizontal text-center p-4 sm:scale-110">
         {/* Box 1 */}
         <div className="stat p-8">
-          <div className="stat-figure text-red-500">
+          <div className="stat-figure text-[#1C75FF]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -30,7 +30,7 @@ const Statistics = ({ movies }) => {
 
         {/* Box 2 */}
         <div className="stat p-8">
-          <div className="stat-figure text-red-500">
+          <div className="stat-figure text-[#F25A3C]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
