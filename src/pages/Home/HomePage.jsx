@@ -5,6 +5,7 @@ import Statistics from "../../Components/Statistics/Statistics";
 import { useState } from "react";
 import { useEffect } from "react";
 import TopRatedMovies from "../../Components/Movies/TopRatedMovies";
+import RecentlyAddedMovies from "../../Components/Movies/RecentlyAddedMovies";
 
 export const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -34,6 +35,7 @@ export const HomePage = () => {
       <Banner featuredMovies={featuredMovies}></Banner>
       <Statistics movies={movies}></Statistics>
       <TopRatedMovies movies={movies}></TopRatedMovies>
+      <RecentlyAddedMovies movies={movies}></RecentlyAddedMovies>
       <Footer></Footer>
     </div>
   );
