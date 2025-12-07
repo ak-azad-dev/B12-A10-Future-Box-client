@@ -1,17 +1,43 @@
-import React, { useState } from "react";
-import { Link, NavLink } from "react-router";
-import { useLocation } from "react-router";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, NavLink, useLocation } from "react-router";
 import Logo from "../../assets/logo.png";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
+import { toast } from "react-toastify";
 
 export const Navbar = () => {
+  const { user, logout } = useAuth();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+
   const menus = [
     { name: "Home", path: "/" },
     { name: "All Movies", path: "/movies" },
     { name: "My Collection", path: "/collections" },
   ];
+
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("You're logged out!");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <>
@@ -69,12 +95,13 @@ export const Navbar = () => {
           </ul>
         </div>
 
-        <div className="navbar-end hidden md:flex gap-5">
+        <div className="navbar-end hidden md:flex gap-5 items-center">
           <button
             className="btn btn-ghost btn-circle"
             onClick={() =>
               document.getElementById("movie_search_modal").showModal()
             }
+            aria-label="Open search"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -92,19 +119,80 @@ export const Navbar = () => {
             </svg>
           </button>
 
-          <Link
-            to="/sign-in"
-            className="btn text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#1C75FF] to-[#4DA1FF] shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
-          >
-            Login
-          </Link>
+          {user ? (
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen((s) => !s)}
+                aria-haspopup="menu"
+                aria-expanded={profileOpen}
+                className="flex items-center gap-3 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1C75FF] p-1"
+              >
+                <div className="w-10 h-10 flex items-center justify-center rounded-full ring-2 ring-primary ring-offset-2 bg-gray-200 text-black font-semibold overflow-hidden">
+                  {user?.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt={user.displayName || "User avatar"}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-sm">
+                      {(user?.displayName || "U").slice(0, 2).toUpperCase()}
+                    </span>
+                  )}
+                </div>
+              </button>
 
-          <Link
-            to="/register"
-            className="btn text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#E63A3A] to-[#F25A3C] shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
-          >
-            Register
-          </Link>
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg ring-1 ring-black/5 overflow-hidden z-50">
+                  <div className="py-2">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <User size={16} /> Profile
+                      </div>
+                    </Link>
+                    <Link
+                      to="/collections"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      My Collections
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setProfileOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
+                    >
+                      <div className="flex items-center gap-2">
+                        <LogOut size={16} /> Logout
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link
+                to="/sign-in"
+                className="btn text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#1C75FF] to-[#4DA1FF] shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/register"
+                className="btn text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#E63A3A] to-[#F25A3C] shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -158,24 +246,23 @@ export const Navbar = () => {
 
           <nav className="p-4">
             <ul className="flex flex-col gap-2">
-              {menus.map((menu, index) => {
-                const isActive = location.pathname === menu.path;
-                return (
-                  <li key={index}>
-                    <NavLink
-                      to={menu.path}
-                      onClick={() => setOpen(false)}
-                      className={`block w-full px-4 py-3 rounded-md transition-colors ${
+              {menus.map((menu, index) => (
+                <li key={index}>
+                  <NavLink
+                    to={menu.path}
+                    onClick={() => setOpen(false)}
+                    className={({ isActive }) =>
+                      `block w-full px-4 py-3 rounded-md transition-colors ${
                         isActive
                           ? "bg-[#0f4fb3] font-semibold"
                           : "hover:bg-white/5"
-                      }`}
-                    >
-                      {menu.name}
-                    </NavLink>
-                  </li>
-                );
-              })}
+                      }`
+                    }
+                  >
+                    {menu.name}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
 
             <div className="mt-6 border-t border-white/5 pt-4 space-y-3">
@@ -188,20 +275,73 @@ export const Navbar = () => {
               >
                 Search Movies
               </button>
-              <Link
-                to="/sign-in"
-                onClick={() => setOpen(false)}
-                className="block w-full px-4 py-3 rounded-md bg-white/5 text-white text-center font-semibold"
-              >
-                Login
-              </Link>
-              <Link
-                to="/register"
-                onClick={() => setOpen(false)}
-                className="block w-full px-4 py-3 rounded-md bg-linear-to-r from-[#E63A3A] to-[#F25A3C] text-white text-center font-semibold"
-              >
-                Register
-              </Link>
+
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3 px-4">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-black font-semibold">
+                      {user?.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt={user.displayName || "avatar"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span>
+                          {(user?.displayName || "U").slice(0, 2).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold">
+                        {user?.displayName || user?.email}
+                      </div>
+                      <div className="text-xs text-gray-300">Member</div>
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/profile"
+                    onClick={() => setOpen(false)}
+                    className="block w-full px-4 py-3 rounded-md bg-white/5 text-white text-center font-semibold"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    to="/collections"
+                    onClick={() => setOpen(false)}
+                    className="block w-full px-4 py-3 rounded-md bg-white/5 text-white text-center font-semibold"
+                  >
+                    My Collections
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setOpen(false);
+                      handleLogout();
+                    }}
+                    className="block w-full px-4 py-3 rounded-md bg-linear-to-r from-[#E63A3A] to-[#F25A3C] text-white text-center font-semibold"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/sign-in"
+                    onClick={() => setOpen(false)}
+                    className="block w-full px-4 py-3 rounded-md bg-white/5 text-white text-center font-semibold"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setOpen(false)}
+                    className="block w-full px-4 py-3 rounded-md bg-linear-to-r from-[#E63A3A] to-[#F25A3C] text-white text-center font-semibold"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </aside>

@@ -81,7 +81,7 @@ export default function SignInPage() {
             Welcome back
           </h2>
           <p className="text-gray-300 mb-8">
-            Sign in to continue to DevStation — your gaming & community hub.
+            Sign in to continue to Movie Master Pro — your movies & community hub.
           </p>
 
           <div className="space-y-4">
