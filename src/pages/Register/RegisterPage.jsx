@@ -53,6 +53,7 @@ const RegisterPage = () => {
       navigate("/");
     } catch (err) {
       setError(err?.message || "Registration failed");
+      toast.error(err?.message);
     } finally {
       setLoading(false);
     }

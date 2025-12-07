@@ -1,12 +1,12 @@
 import React from "react";
 import { Star } from "lucide-react";
-import { NavLink } from "react-router";
+import { Link } from "react-router";
 
 const Movie = ({ movie }) => {
   const { _id, title, releaseYear, rating, posterUrl } = movie;
 
   return (
-    <NavLink to={`/game/details/${_id}`} className="block">
+    <Link to={`/movie/details/${_id}`} className="block">
       <div className="card bg-white shadow-sm rounded-sm transition duration-300 ease-out transform hover:scale-105">
         <figure className="p-4">
           <img
@@ -34,7 +34,7 @@ const Movie = ({ movie }) => {
           </div>
         </div>
       </div>
-    </NavLink>
+    </Link>
   );
 };
 
