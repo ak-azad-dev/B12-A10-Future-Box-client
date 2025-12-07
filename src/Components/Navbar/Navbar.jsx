@@ -94,7 +94,7 @@ export const Navbar = () => {
 
           <Link
             to="/sign-in"
-            className="btn text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#4DA1FF] to-[#1C75FF] shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
+            className="btn text-base font-semibold text-white border-0 flex items-center gap-2.5 rounded-lg px-5 py-2.5 bg-linear-to-r from-[#1C75FF] to-[#4DA1FF] shadow-md transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
           >
             Login
           </Link>
@@ -184,7 +184,7 @@ export const Navbar = () => {
                   document.getElementById("movie_search_modal").showModal();
                   setOpen(false);
                 }}
-                className="w-full text-left px-4 py-3 rounded-md bg-linear-to-r from-[#4DA1FF] to-[#1C75FF] font-semibold"
+                className="w-full text-left px-4 py-3 rounded-md bg-linear-to-r from-[#1C75FF] to-[#4DA1FF] font-semibold"
               >
                 Search Movies
               </button>
