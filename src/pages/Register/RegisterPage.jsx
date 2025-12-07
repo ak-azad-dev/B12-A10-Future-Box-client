@@ -14,6 +14,7 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
 
+  // Calculate password strength
   function calcPasswordStrength(pw = "") {
     let score = 0;
     if (pw.length >= 6) score += 1;
@@ -24,6 +25,7 @@ const RegisterPage = () => {
     return score; // 0 - 5
   }
 
+  // Handle form submission
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -34,19 +36,19 @@ const RegisterPage = () => {
     const photoURL = e.target.photo.value.trim();
     const password = e.target.password.value;
 
+    // Password validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
     if (!passwordRegex.test(password)) {
       setPasswordError(
-        "Password must have upper & lower case letters and at least 6 characters."
+        "Password must:\n• Contain at least one uppercase letter\n• Contain at least one lowercase letter\n• Be at least 6 characters long"
       );
       return;
     }
 
     setLoading(true);
     try {
-      const result = await createUser(displayName, email, photoURL, password);
-      const user = result.user;
-      console.log('user', user)
+      //const result = await createUser(displayName, email, photoURL, password);
+      await createUser(displayName, email, photoURL, password);
       toast.success("You're registered successfully!");
       navigate("/");
     } catch (err) {
@@ -56,13 +58,13 @@ const RegisterPage = () => {
     }
   };
 
+  // Google login
   const handleRegisterWithGoogle = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      const result = await loginWithGoogle();
-      console.log('result', result)
+      await loginWithGoogle();
       toast.success("You're logged in!");
       navigate("/");
     } catch (err) {
@@ -75,6 +77,7 @@ const RegisterPage = () => {
   return (
     <div className="min-h-screen bg-linear-to-b from-[#06070a] via-[#071226] to-[#0b1020] flex items-center justify-center px-4 py-20">
       <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        {/* Left Banner */}
         <div className="hidden lg:flex flex-col justify-center gap-6 p-8 rounded-2xl bg-[linear-gradient(135deg,#0f1724_0%,#0b1220_100%)] shadow-2xl border border-white/5">
           <h2 className="text-4xl font-extrabold text-white">
             Welcome to MovieMaster Pro
@@ -84,7 +87,6 @@ const RegisterPage = () => {
             collections, and discover curated recommendations. Fast sign up — no
             fuss.
           </p>
-
           <ul className="space-y-2 text-sm text-gray-400">
             <li className="flex items-center gap-3">
               <span className="inline-block w-2 h-2 rounded-full bg-[#E63A3A]" />
@@ -101,6 +103,7 @@ const RegisterPage = () => {
           </ul>
         </div>
 
+        {/* Registration Form */}
         <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10">
           <h3 className="text-2xl font-bold text-gray-800 text-center">
             Create your account
@@ -116,6 +119,7 @@ const RegisterPage = () => {
               </div>
             )}
 
+            {/* Full Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Full name
@@ -129,6 +133,7 @@ const RegisterPage = () => {
               />
             </div>
 
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Email
@@ -143,6 +148,7 @@ const RegisterPage = () => {
               />
             </div>
 
+            {/* Photo URL */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Photo URL
@@ -156,6 +162,7 @@ const RegisterPage = () => {
               />
             </div>
 
+            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Password
@@ -167,9 +174,20 @@ const RegisterPage = () => {
                   required
                   className="block w-full rounded-md border-gray-200 shadow-sm px-3 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:border-[#E63A3A] focus:ring-2 focus:ring-[#E63A3A]/25"
                   placeholder="Create a password"
-                  onChange={(e) =>
-                    setPasswordStrength(calcPasswordStrength(e.target.value))
-                  }
+                  onChange={(e) => {
+                    const pw = e.target.value;
+                    setPasswordStrength(calcPasswordStrength(pw));
+
+                    // Real-time validation
+                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+                    if (!passwordRegex.test(pw)) {
+                      setPasswordError(
+                        "Password must:\n• Contain at least one uppercase letter\n• Contain at least one lowercase letter\n• Be at least 6 characters long"
+                      );
+                    } else {
+                      setPasswordError("");
+                    }
+                  }}
                   autoComplete="new-password"
                 />
                 <button
@@ -181,10 +199,15 @@ const RegisterPage = () => {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+
+              {/* Error message */}
               {passwordError && (
-                <div className="text-sm text-red-600 mt-2">{passwordError}</div>
+                <div className="text-sm text-red-600 mt-2 whitespace-pre-line">
+                  {passwordError}
+                </div>
               )}
 
+              {/* Password Strength Bar */}
               <div className="mt-3">
                 <div className="h-2 w-full bg-gray-100 rounded overflow-hidden">
                   <div
@@ -209,6 +232,7 @@ const RegisterPage = () => {
               </div>
             </div>
 
+            {/* Register Button */}
             <button
               type="submit"
               disabled={loading}
@@ -217,12 +241,14 @@ const RegisterPage = () => {
               {loading ? "Creating..." : "Register"}
             </button>
 
+            {/* OR Divider */}
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-gray-200" />
               <div className="text-xs text-gray-400">or</div>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
+            {/* Google Sign-In */}
             <button
               type="button"
               onClick={handleRegisterWithGoogle}
@@ -261,6 +287,7 @@ const RegisterPage = () => {
               </span>
             </button>
 
+            {/* Sign in link */}
             <div className="text-center pt-2">
               <span className="text-sm text-gray-600">
                 Already have an account?{" "}

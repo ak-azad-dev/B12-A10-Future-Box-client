@@ -52,6 +52,7 @@ export default function SignInPage() {
         message = code;
       }
       setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

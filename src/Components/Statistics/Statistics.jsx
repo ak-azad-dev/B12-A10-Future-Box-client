@@ -1,11 +1,40 @@
 import React from "react";
+import { motion as Motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.25 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 30 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
 
 const Statistics = ({ movies }) => {
   return (
-    <div className="w-full flex justify-center py-10 bg-white">
-      <div className="stats stats-vertical sm:stats-horizontal text-center p-4 sm:scale-110">
+    <div className="w-full flex justify-center py-10 bg-linear-to-b from-[#06070a] via-[#071226] to-[#0b1020]">
+      <Motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        className="stats stats-vertical sm:stats-horizontal text-center p-4 sm:scale-110 gap-10"
+      >
         {/* Box 1 */}
-        <div className="stat p-8">
+        <Motion.div
+          variants={item}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 150 }}
+          className="stat p-8 shadow-md rounded-2xl bg-white hover:shadow-xl"
+        >
           <div className="stat-figure text-[#1C75FF]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -26,10 +55,15 @@ const Statistics = ({ movies }) => {
           <div className="stat-value text-black text-4xl font-bold">
             {movies.length}
           </div>
-        </div>
+        </Motion.div>
 
         {/* Box 2 */}
-        <div className="stat p-8">
+        <Motion.div
+          variants={item}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 150 }}
+          className="stat p-8 shadow-md rounded-2xl bg-white hover:shadow-xl"
+        >
           <div className="stat-figure text-[#F25A3C]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -48,8 +82,8 @@ const Statistics = ({ movies }) => {
 
           <div className="stat-title text-gray-700 text-xl">Users</div>
           <div className="stat-value text-black text-4xl font-bold">4,200</div>
-        </div>
-      </div>
+        </Motion.div>
+      </Motion.div>
     </div>
   );
 };

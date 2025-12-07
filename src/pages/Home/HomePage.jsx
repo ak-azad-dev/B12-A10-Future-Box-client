@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useEffect } from "react";
 import TopRatedMovies from "../../Components/Movies/TopRatedMovies";
 import RecentlyAddedMovies from "../../Components/Movies/RecentlyAddedMovies";
+import { GenreSection } from "../../Components/GenreSection/GenreSection";
+import { AboutPlatform } from "../../Components/About/AboutPlatform";
 
 export const HomePage = () => {
   const [movies, setMovies] = useState([]);
@@ -36,6 +38,8 @@ export const HomePage = () => {
       <Statistics movies={movies}></Statistics>
       <TopRatedMovies movies={movies}></TopRatedMovies>
       <RecentlyAddedMovies movies={movies}></RecentlyAddedMovies>
+      <GenreSection></GenreSection>
+      <AboutPlatform></AboutPlatform>
       <Footer></Footer>
     </div>
   );

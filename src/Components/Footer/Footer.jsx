@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-base-300 text-base-content p-10 mt-18">
+    <footer className="bg-base-300 text-base-content p-10 pt-15">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-10">
         <nav className="flex flex-col gap-2" aria-label="Quick Links">
           <h6 className="footer-title">Quick Links</h6>
