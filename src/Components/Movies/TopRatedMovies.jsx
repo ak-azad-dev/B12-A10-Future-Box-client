@@ -45,7 +45,7 @@ export default function TopRatedMovies({ movies = [] }) {
   }, [movies]);
 
   return (
-    <section className="py-20 px-6 w-full md:max-w-[1440px] mx-auto bg-[linear-gradient(180deg,#06070a_0%,#071226_50%,#0b1020_100%)]">
+    <section className="w-full py-14 px-4 md:px-10 bg-linear-to-b from-black via-gray-900 to-black">
       <div className="max-w-8xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-2 text-center">
           Top Rated <span className="text-[#4DA1FF]">Movies</span>
@@ -94,7 +94,7 @@ export default function TopRatedMovies({ movies = [] }) {
                     Keep using your existing Movie component to render the card content.
                     If Movie expects a specific layout, it will still receive the same `movie` prop.
                   */}
-                  <Movie movie={movie} />
+                  <Movie key={movie._id || movie.id} movie={movie} />
                 </Motion.div>
               ))}
             </AnimatePresence>
