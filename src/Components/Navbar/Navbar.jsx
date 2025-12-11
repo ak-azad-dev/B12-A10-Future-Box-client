@@ -127,6 +127,7 @@ export const Navbar = () => {
                 aria-expanded={profileOpen}
                 className="flex items-center gap-3 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1C75FF] p-1"
               >
+                {/* Avatar */}
                 <div className="w-10 h-10 flex items-center justify-center rounded-full ring-2 ring-primary ring-offset-2 bg-gray-200 text-black font-semibold overflow-hidden">
                   {user?.photoURL ? (
                     <img
@@ -140,6 +141,10 @@ export const Navbar = () => {
                     </span>
                   )}
                 </div>
+
+                <span className="text-white font-medium hidden md:block">
+                  {user?.displayName}
+                </span>
               </button>
 
               {profileOpen && (
@@ -153,6 +158,13 @@ export const Navbar = () => {
                       <div className="flex items-center gap-2">
                         <User size={16} /> Profile
                       </div>
+                    </Link>
+                    <Link
+                      to="/movie/add"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      Add Movie
                     </Link>
                     <Link
                       to="/collections"

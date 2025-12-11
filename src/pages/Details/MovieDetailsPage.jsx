@@ -59,7 +59,7 @@ const MovieDetailsPage = () => {
 
       const headers = { "Content-Type": "application/json" };
       if (typeof getToken === "function") {
-        const token = await getToken(); // implement in useAuth if needed
+        const token = await getToken(); 
         if (token) headers.Authorization = `Bearer ${token}`;
       } else if (user?.accessToken) {
         headers.Authorization = `Bearer ${user.accessToken}`;

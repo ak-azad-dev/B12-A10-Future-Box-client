@@ -6,6 +6,8 @@ import RegisterPage from "../pages/Register/RegisterPage";
 import SignInPage from "../pages/SignIn/SignIn";
 import MovieDetailsPage from "../pages/Details/MovieDetailsPage";
 import AllMoviesPage from "../pages/Movies/AllMoviesPage";
+import AddMoviePage from "../pages/Movies/AddMoviePage";
+import UpdateMoviePage from "../pages/Movies/UpdateMoviePage";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +30,14 @@ export const router = createBrowserRouter([
       {
         path: "/movies",
         Component: AllMoviesPage,
+      },
+      {
+        path: "/movie/add",
+        Component: AddMoviePage,
+      },
+      {
+        path: "/movie/edit/:id",
+        Component: UpdateMoviePage,
       },
       {
         path: "/movie/details/:id",

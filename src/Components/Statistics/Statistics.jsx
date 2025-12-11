@@ -19,6 +19,9 @@ const item = {
 };
 
 const Statistics = ({ movies }) => {
+
+  const usersCount = new Set(movies.map((m) => m.addedBy)).size;
+
   return (
     <div className="w-full flex justify-center py-10 bg-linear-to-b from-[#06070a] via-[#071226] to-[#0b1020]">
       <Motion.div
@@ -81,7 +84,9 @@ const Statistics = ({ movies }) => {
           </div>
 
           <div className="stat-title text-gray-700 text-xl">Users</div>
-          <div className="stat-value text-black text-4xl font-bold">4,200</div>
+          <div className="stat-value text-black text-4xl font-bold">
+            {usersCount}
+          </div>
         </Motion.div>
       </Motion.div>
     </div>
