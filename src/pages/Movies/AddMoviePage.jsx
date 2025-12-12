@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useAuth } from "../../Hooks/useAuth";
+import useAxiosSecure from "../../useAxiosSecure/useAxiosSecure";
 
 export default function AddMoviePage() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export default function AddMoviePage() {
   const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
+
+  const axiosSecure = useAxiosSecure();
 
   // Basic validation
   const validate = () => {
@@ -70,25 +73,23 @@ export default function AddMoviePage() {
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3000/api/movies/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(moviePayload),
-      });
+      setFormError("");
+      
+      const res = await axiosSecure.post("/api/movies/add", moviePayload);
+      const created = res.data?.data || res.data;
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message || "Failed to create movie");
-      }
-
-      const created = await res.json();
-      console.log('created', created)
+      console.log("created", created);
       toast.success("Movie added successfully!");
       navigate("/my-collection");
+      return created;
     } catch (err) {
+      const message =
+        err.response?.data?.message || err.message || "Could not add movie";
+
       console.error("Add movie error:", err);
-      toast.error(err.message || "Could not add movie");
-      setFormError(err.message || "Could not add movie");
+      toast.error(message);
+      setFormError(message);
+      throw err; // optional — rethrow if callers need to react
     } finally {
       setLoading(false);
     }

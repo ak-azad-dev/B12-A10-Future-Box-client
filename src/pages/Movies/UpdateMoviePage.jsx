@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import Logo from "../../assets/logo.png";
-
-const API_BASE = "http://localhost:3000/api/movies";
+import useAxiosSecure from "../../useAxiosSecure/useAxiosSecure";
 
 export default function UpdateMoviePage() {
   const { id } = useParams();
@@ -28,18 +27,17 @@ export default function UpdateMoviePage() {
   const [formError, setFormError] = useState("");
   const [fetchError, setFetchError] = useState("");
 
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
     let mounted = true;
     const load = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE}/${id}`);
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.message || "Failed to load movie");
-        }
-        const movie = await res.json();
+
+        const res = await axiosSecure.get(`/api/movies/${id}`);
+        const movie = res.data?.data || res.data;
+
         if (!mounted) return;
 
         setTitle(movie.title || "");
@@ -58,7 +56,10 @@ export default function UpdateMoviePage() {
         setAddedBy(movie.addedBy || "");
       } catch (err) {
         console.error("Load movie error", err);
-        if (mounted) setFetchError(err.message || "Failed to load movie");
+        if (mounted)
+          setFetchError(
+            err.response?.data?.message || err.message || "Failed to load movie"
+          );
       } finally {
         if (mounted) setLoading(false);
       }
@@ -68,7 +69,7 @@ export default function UpdateMoviePage() {
     return () => {
       mounted = false;
     };
-  }, [id]);
+  }, [axiosSecure, id]);
 
 
   function validate() {
@@ -119,27 +120,21 @@ export default function UpdateMoviePage() {
 
     try {
       setSubmitting(true);
+      console.log("id", id);
+      const res = await axiosSecure.put(`/api/movies/update/${id}`, payload);
+      const updated = res.data?.data || res.data;
 
-      console.log('id', id)
-      const res = await fetch(`${API_BASE}/update/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message || "Failed to update movie");
-      }
-
-      const updated = await res.json();
-      console.log('updated', updated)
+      console.log("updated", updated);
       toast.success("Movie updated successfully!");
-      // navigate to details
       navigate(`/movie/details/${id}`);
+
+      return updated;
     } catch (err) {
+      const message =
+        err.response?.data?.message || err.message || "Could not update movie";
+
       console.error("Update error", err);
-      setFormError(err.message || "Could not update movie");
+      setFormError(message);
     } finally {
       setSubmitting(false);
     }
@@ -374,29 +369,37 @@ export default function UpdateMoviePage() {
 
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 setFormError("");
                 setLoading(true);
-                fetch(`${API_BASE}/${id}`)
-                  .then((r) => r.json())
-                  .then((m) => {
-                    setTitle(m.title || "");
-                    setGenre(m.genre || "");
-                    setReleaseYear(m.releaseYear ?? "");
-                    setDirector(m.director || "");
-                    setCast(
-                      Array.isArray(m.cast) ? m.cast.join(", ") : m.cast || ""
-                    );
-                    setRating(m.rating ?? "");
-                    setDuration(m.duration ?? "");
-                    setPlotSummary(m.plotSummary || "");
-                    setPosterUrl(m.posterUrl || "");
-                    setLanguage(m.language || "");
-                    setCountry(m.country || "");
-                    setAddedBy(m.addedBy || "");
-                  })
-                  .catch(() => {})
-                  .finally(() => setLoading(false));
+                try {
+                  const res = await axiosSecure.get(`/api/movies/${id}`);
+                  const m = res.data?.data || res.data;
+
+                  setTitle(m.title || "");
+                  setGenre(m.genre || "");
+                  setReleaseYear(m.releaseYear ?? "");
+                  setDirector(m.director || "");
+                  setCast(
+                    Array.isArray(m.cast) ? m.cast.join(", ") : m.cast || ""
+                  );
+                  setRating(m.rating ?? "");
+                  setDuration(m.duration ?? "");
+                  setPlotSummary(m.plotSummary || "");
+                  setPosterUrl(m.posterUrl || "");
+                  setLanguage(m.language || "");
+                  setCountry(m.country || "");
+                  setAddedBy(m.addedBy || "");
+                } catch (err) {
+                  console.error("Reset movie error:", err);
+                  setFormError(
+                    err.response?.data?.message ||
+                      err.message ||
+                      "Failed to reset movie"
+                  );
+                } finally {
+                  setLoading(false);
+                }
               }}
               className="ml-auto px-3 py-2 rounded bg-white/7 text-white"
             >

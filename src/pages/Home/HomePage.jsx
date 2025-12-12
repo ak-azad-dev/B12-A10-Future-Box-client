@@ -9,10 +9,12 @@ import RecentlyAddedMovies from "../../Components/Movies/RecentlyAddedMovies";
 import { GenreSection } from "../../Components/GenreSection/GenreSection";
 import { AboutPlatform } from "../../Components/About/AboutPlatform";
 import { useLocation } from "react-router";
+import useAxiosSecure from "../../useAxiosSecure/useAxiosSecure";
 
 export const HomePage = () => {
   const [movies, setMovies] = useState([]);
   const [featuredMovies, setFeaturedMovies] = useState([]);
+  const axiosSecure = useAxiosSecure();
 
   const pathname = useLocation();
 
@@ -21,21 +23,28 @@ export const HomePage = () => {
   }, [pathname]);
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const res = await fetch(`http://localhost:3000/api/movies`);
-        const data = await res.json();
-        console.log("data", data);
+    axiosSecure.get("/api/movies").then((res) => {
+      setMovies(res.data.data);
+      setFeaturedMovies((res.data.data || []).slice(0, 3));
+    });
+  }, [axiosSecure]);
 
-        setMovies(data.data);
-        setFeaturedMovies((data.data || []).slice(0, 3));
-      } catch (err) {
-        console.error("Failed to fetch:", err);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchMovies = async () => {
+  //     try {
+  //       const res = await fetch(`http://localhost:3000/api/movies`);
+  //       const data = await res.json();
+  //       console.log("data", data);
 
-    fetchMovies();
-  }, []);
+  //       setMovies(data.data);
+  //       setFeaturedMovies((data.data || []).slice(0, 3));
+  //     } catch (err) {
+  //       console.error("Failed to fetch:", err);
+  //     }
+  //   };
+
+  //   fetchMovies();
+  // }, []);
 
   return (
     <div>

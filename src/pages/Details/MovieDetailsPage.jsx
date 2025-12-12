@@ -4,51 +4,56 @@ import Logo from "../../assets/logo.png";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 import { ChevronLeft, PencilOff, Trash } from "lucide-react";
-
-const API_BASE = "http://localhost:3000/api/movies";
+import useAxiosSecure from "../../useAxiosSecure/useAxiosSecure";
 
 const MovieDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, getToken } = useAuth();
+  const { user } = useAuth();
 
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
   // Fetch movie
   useEffect(() => {
     let mounted = true;
+
     const fetchMovie = async () => {
       setLoading(true);
       setError("");
+
       try {
-        const res = await fetch(`${API_BASE}/${id}`);
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.message || "Failed to fetch movie details");
-        }
-        const data = await res.json();
-        if (mounted) setMovie(data);
+        const res = await axiosSecure.get(`/api/movies/${id}`);
+
+        // assuming your backend returns { data: { ...movie } }
+        const movieData = res.data?.data || res.data;
+
+        if (mounted) setMovie(movieData);
       } catch (err) {
-        if (mounted) setError(err.message || "Failed to load movie");
+        const message =
+          err.response?.data?.message || err.message || "Failed to load movie";
+        if (mounted) setError(message);
       } finally {
         if (mounted) setLoading(false);
       }
     };
 
     fetchMovie();
+
     return () => {
       mounted = false;
     };
-  }, [id]);
+  }, [axiosSecure, id]);
 
   const isOwner = user?.email === movie?.addedBy;
 
   // Delete handler
   const handleDelete = useCallback(async () => {
     if (!movie) return;
+
     const ok = window.confirm(
       `Delete "${movie.title}"? This cannot be undone.`
     );
@@ -57,33 +62,20 @@ const MovieDetailsPage = () => {
     try {
       setDeleting(true);
 
-      const headers = { "Content-Type": "application/json" };
-      if (typeof getToken === "function") {
-        const token = await getToken(); 
-        if (token) headers.Authorization = `Bearer ${token}`;
-      } else if (user?.accessToken) {
-        headers.Authorization = `Bearer ${user.accessToken}`;
-      }
-
-      const res = await fetch(`${API_BASE}/${id}`, {
-        method: "DELETE",
-        headers,
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message || "Failed to delete movie");
-      }
-
+      const res = await axiosSecure.delete(`/api/movies/${id}`);
+      console.log('res', res);
       toast.success("Movie deleted");
       navigate("/", { replace: true });
     } catch (err) {
+      const message =
+        err.response?.data?.message || err.message || "Could not delete movie";
+
       console.error("Delete failed", err);
-      toast.error(err.message || "Could not delete movie");
+      toast.error(message);
     } finally {
       setDeleting(false);
     }
-  }, [id, movie, navigate, getToken, user]);
+  }, [id, movie, navigate, axiosSecure]);
 
   // Loading state
   if (loading) {

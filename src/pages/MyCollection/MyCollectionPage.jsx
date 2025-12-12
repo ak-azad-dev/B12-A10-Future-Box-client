@@ -4,17 +4,18 @@ import Logo from "../../assets/logo.png";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 import { PencilOff, Trash } from "lucide-react";
-
-const API_BASE = "http://localhost:3000/api/movies";
+import useAxiosSecure from "../../useAxiosSecure/useAxiosSecure";
 
 export default function MyCollectionPage() {
-  const { user, getToken } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+
+  const axiosSecure = useAxiosSecure();
 
   // Fetch user's collection using your backend endpoint
   useEffect(() => {
@@ -25,22 +26,27 @@ export default function MyCollectionPage() {
         setLoading(false);
         return;
       }
-
       setLoading(true);
       setError("");
       try {
-        console.log('user.email', user.email)
-        const res = await fetch(
-          `${API_BASE}/my-collection/${encodeURIComponent(user.email)}`
+        setLoading(true);
+        console.log("user.email", user.email);
+
+        const res = await axiosSecure.get(
+          `/api/movies/my-collection/${encodeURIComponent(user.email)}`
         );
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.message || "Failed to load collection");
-        }
-        const data = await res.json();
+
+        const data = res.data?.data || res.data;
+
         if (mounted) setMovies(Array.isArray(data) ? data : []);
       } catch (err) {
-        if (mounted) setError(err.message || "Could not load collection");
+        if (mounted)
+          setError(
+            err.response?.data?.message ||
+              err.message ||
+              "Could not load collection"
+          );
+        console.error("Load collection error:", err);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -50,7 +56,7 @@ export default function MyCollectionPage() {
     return () => {
       mounted = false;
     };
-  }, [user?.email]);
+  }, [axiosSecure, user.email]);
 
   // Delete handler (calls protected DELETE /api/movies/:id)
   const handleDelete = useCallback(
@@ -61,31 +67,25 @@ export default function MyCollectionPage() {
       try {
         setDeletingId(id);
 
-        const headers = { "Content-Type": "application/json" };
-        if (typeof getToken === "function") {
-          const token = await getToken();
-          if (token) headers.Authorization = `Bearer ${token}`;
-        }
-
-        const res = await fetch(`${API_BASE}/${id}`, {
-          method: "DELETE",
-          headers,
-        });
-
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.message || "Failed to delete movie");
-        }
+        // axiosSecure automatically injects Authorization
+        await axiosSecure.delete(`/api/movies/${id}`);
 
         toast.success("Movie deleted");
+
+        // remove deleted movie from state
         setMovies((prev) => prev.filter((m) => m._id !== id));
       } catch (err) {
-        toast.error(err.message || "Could not delete movie");
+        const message =
+          err.response?.data?.message ||
+          err.message ||
+          "Could not delete movie";
+        toast.error(message);
+        console.error("Delete movie error:", err);
       } finally {
         setDeletingId(null);
       }
     },
-    [getToken]
+    [axiosSecure]
   );
 
   if (loading) {
