@@ -31,7 +31,7 @@ const Statistics = ({ movies }) => {
         viewport={{ once: true, margin: "-100px" }}
         className="stats stats-vertical sm:stats-horizontal text-center p-4 sm:scale-110 gap-10"
       >
-        {/* Box 1 */}
+
         <Motion.div
           variants={item}
           whileHover={{ scale: 1.05 }}
@@ -60,7 +60,7 @@ const Statistics = ({ movies }) => {
           </div>
         </Motion.div>
 
-        {/* Box 2 */}
+
         <Motion.div
           variants={item}
           whileHover={{ scale: 1.05 }}

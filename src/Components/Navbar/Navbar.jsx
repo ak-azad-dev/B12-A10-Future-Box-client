@@ -15,7 +15,7 @@ export const Navbar = () => {
   const menus = [
     { name: "Home", path: "/" },
     { name: "All Movies", path: "/movies" },
-    { name: "My Collection", path: "/collections" },
+    { name: "My Collection", path: "/my-collection" },
   ];
 
   // Logout handler
@@ -28,7 +28,6 @@ export const Navbar = () => {
     }
   };
 
-  // Close profile dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(e) {
       if (profileRef.current && !profileRef.current.contains(e.target)) {

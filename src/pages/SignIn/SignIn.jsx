@@ -13,9 +13,9 @@ export default function SignInPage() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const redirectTo = location?.state?.from || "/";
+  const redirectTo = `${location.state ? location.state : "/"}`;
 
-  const handleSubmit = async (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -58,7 +58,7 @@ export default function SignInPage() {
     }
   };
 
-  const handleGoogle = async (e) => {
+  const handleGoogleSignIn = async (e) => {
     e?.preventDefault();
     setError("");
     setLoading(true);
@@ -82,7 +82,8 @@ export default function SignInPage() {
             Welcome back
           </h2>
           <p className="text-gray-300 mb-8">
-            Sign in to continue to Movie Master Pro — your movies & community hub.
+            Sign in to continue to Movie Master Pro — your movies & community
+            hub.
           </p>
 
           <div className="space-y-4">
@@ -118,7 +119,7 @@ export default function SignInPage() {
             </p>
 
             <form
-              onSubmit={handleSubmit}
+              onSubmit={handleSignIn}
               className="space-y-4"
               aria-label="Sign in form"
             >
@@ -234,7 +235,7 @@ export default function SignInPage() {
 
               <button
                 type="button"
-                onClick={handleGoogle}
+                onClick={handleGoogleSignIn}
                 disabled={loading}
                 className="w-full inline-flex items-center justify-center gap-3 rounded-md px-4 py-2 border border-gray-200 bg-white hover:shadow transition"
               >
