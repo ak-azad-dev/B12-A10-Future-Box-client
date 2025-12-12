@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Logo from "../../assets/logo.png";
 import Movie from "../../Components/Movie/Movie";
+import useAxiosSecure from "../../useAxiosSecure/useAxiosSecure";
 
 const AVAILABLE_GENRES = [
   "Action",
@@ -25,6 +26,8 @@ export default function AllMoviesPage() {
 
   const debounceRef = useRef(null);
 
+  const axiosSecure = useAxiosSecure();
+
   useEffect(() => {
     let mounted = true;
 
@@ -32,17 +35,19 @@ export default function AllMoviesPage() {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(
-          `http://localhost:3000/api/movies${queryString}`
-        );
-        if (!res.ok) throw new Error("Failed to load movies");
-        const data = await res.json();
+
+        const res = await axiosSecure.get(`/api/movies${queryString}`);
+        const moviesData = res.data?.data || res.data;
+
         if (mounted) {
-          setMovies(Array.isArray(data.data) ? data.data : []);
+          setMovies(Array.isArray(moviesData) ? moviesData : []);
         }
       } catch (err) {
-        console.error(err);
-        if (mounted) setError(err.message || "Something went wrong");
+        console.error("Load movies error:", err);
+        if (mounted)
+          setError(
+            err.response?.data?.message || err.message || "Something went wrong"
+          );
       } finally {
         if (mounted) setLoading(false);
       }
@@ -71,7 +76,7 @@ export default function AllMoviesPage() {
       mounted = false;
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [selectedGenres, minRating, maxRating]);
+  }, [selectedGenres, minRating, maxRating, axiosSecure]);
 
   function toggleGenre(genre) {
     setSelectedGenres((prev) =>

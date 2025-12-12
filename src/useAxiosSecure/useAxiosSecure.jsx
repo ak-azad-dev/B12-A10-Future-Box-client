@@ -3,7 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://movie-master-pro-api-six.vercel.app",
 });
 
 const useAxiosSecure = () => {
